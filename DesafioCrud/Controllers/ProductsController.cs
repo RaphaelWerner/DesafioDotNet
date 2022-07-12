@@ -1,5 +1,6 @@
 ﻿using DesafioCrud.Models;
 using DesafioCrud.Repository;
+using DesafioCrud.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace DesafioCrud.Controllers
 {
     public class ProductsController : ApiController
     {
-        readonly ProductsRepository productsRepository;
+        readonly IProductsRepository productsRepository;
         public ProductsController()
         {
             productsRepository = new ProductsRepository();
@@ -28,11 +29,11 @@ namespace DesafioCrud.Controllers
                 List<Product> response = productsRepository.GetProducts();
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
-            catch
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, ex);
             }
-           
+
         }
 
         [HttpGet]
@@ -43,38 +44,52 @@ namespace DesafioCrud.Controllers
                 Product response = productsRepository.GetProductById(id);
                 return Request.CreateResponse(HttpStatusCode.OK, response);
             }
-            catch
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, ex);
             }
         }
 
         [HttpPost]
         public HttpResponseMessage AddProduct(Product product)
         {
-            if (ModelState.IsValid)
+            try
             {
-                int id = productsRepository.AddProduct(product);
-                Product response = productsRepository.GetProductById(id);
+                if (ModelState.IsValid)
+                {
+                    int id = productsRepository.AddProduct(product);
+                    Product response = productsRepository.GetProductById(id);
 
-                return Request.CreateResponse(HttpStatusCode.OK, response);
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                }
+
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
-
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, ex);
+            }
         }
 
         [HttpPut]
         public HttpResponseMessage UpdateProduct(Product product)
         {
-            if (ModelState.IsValid)
+            try
             {
-                int id = productsRepository.UpdateProduct(product);
-                Product response = productsRepository.GetProductById(id);
+                if (ModelState.IsValid)
+                {
+                    int id = productsRepository.UpdateProduct(product);
+                    Product response = productsRepository.GetProductById(id);
 
-                return Request.CreateResponse(HttpStatusCode.OK, response);
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                }
+
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
-
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, ex);
+            }
         }
 
         [HttpDelete]
@@ -85,9 +100,9 @@ namespace DesafioCrud.Controllers
                 productsRepository.DeleteProduct(id);
                 return Request.CreateResponse(HttpStatusCode.OK, id);
             }
-            catch
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, ex);
             }
         }
 

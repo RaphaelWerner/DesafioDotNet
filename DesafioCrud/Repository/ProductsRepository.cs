@@ -1,5 +1,6 @@
 ﻿using DesafioCrud.Models;
 using DesafioCrud.Repository.DbConnection;
+using DesafioCrud.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,7 +10,7 @@ using System.Web;
 
 namespace DesafioCrud.Repository
 {
-    public class ProductsRepository : DbConnection.DbConnection
+    public class ProductsRepository : DbConnection.DbConnection, IProductsRepository
     {
         
         public List<Product> GetProducts()
